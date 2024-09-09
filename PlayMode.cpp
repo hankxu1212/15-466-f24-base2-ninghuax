@@ -7,16 +7,13 @@
 #include "Load.hpp"
 #include "gl_errors.hpp"
 #include "data_path.hpp"
+#include "Math.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include <random>
 
-const std::string BANANA("Banana");
-const std::string APPLE("Apple");
-const std::string ORANGE("Orange");
-const std::string COCONUT("Coconut");
-const std::string AVOCADO("Avocado");
+const std::string FRUITS[4] =  { "Banana", "Apple", "Orange", "Coconut" }; 
 
 GLuint myscene_meshes_for_lit_color_texture_program = 0;
 Load< MeshBuffer > myscene_meshes(LoadTagDefault, []() -> MeshBuffer const * {
@@ -122,15 +119,26 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 
 void PlayMode::HandleSpacePressed()
 {
-	static int y = 0;
-	InstantiateFruit(BANANA, glm::vec3(0, y, 0));
-	y++;
+	
+}
+
+void PlayMode::UpdateSpawn()
+{
+	if (currentSpawnIndex >= MAX_LEVELS)
+		return;
+	
+	if (time > spawnPattern[currentSpawnIndex].timeStamp)
+	{
+		InstantiateFruit(FRUITS[spawnPattern[currentSpawnIndex].fruitType], glm::vec3(Noire::Math::Random(-1, 1), Noire::Math::Random(-1, 1), Noire::Math::Random(2.0f, 2.5f)));
+		currentSpawnIndex++;
+	}
 }
 
 void PlayMode::update(float elapsed) 
 {
-	static float time = 0;
 	time += elapsed;
+
+	UpdateSpawn();
 
 	for(auto& fruit : fruits)
 	{
@@ -143,7 +151,6 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	camera->aspect = float(drawable_size.x) / float(drawable_size.y);
 
 	//set up light type and position for lit_color_texture_program:
-	// TODO: consider using the Light(s) in the scene to do this
 	glUseProgram(lit_color_texture_program->program);
 	glUniform1i(lit_color_texture_program->LIGHT_TYPE_int, 1);
 	glUniform3fv(lit_color_texture_program->LIGHT_DIRECTION_vec3, 1, glm::value_ptr(lightTransform->rotation));
@@ -172,12 +179,12 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		));
 
 		constexpr float H = 0.09f;
-		lines.draw_text("Mouse motion rotates camera; WASD moves; escape ungrabs mouse",
+		lines.draw_text(displayText,
 			glm::vec3(-aspect + 0.1f * H, -1.0 + 0.1f * H, 0.0),
 			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
 			glm::u8vec4(0x00, 0x00, 0x00, 0x00));
 		float ofs = 2.0f / drawable_size.y;
-		lines.draw_text("Mouse motion rotates camera; WASD moves; escape ungrabs mouse",
+		lines.draw_text(displayText,
 			glm::vec3(-aspect + 0.1f * H + ofs, -1.0 + 0.1f * H + ofs, 0.0),
 			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
 			glm::u8vec4(0xff, 0xff, 0xff, 0x00));

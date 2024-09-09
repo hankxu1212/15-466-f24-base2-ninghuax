@@ -8,4 +8,7 @@ struct Fruit
 
 	Scene::Drawable* drawable;
 	void Update(float deltaTime);
+
+    float currentVelocity;
+    glm::quat rotationDirection;
 };

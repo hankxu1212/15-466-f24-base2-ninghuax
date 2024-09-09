@@ -8,6 +8,8 @@
 #include <deque>
 #include "Fruit.hpp"
 
+#define MAX_LEVELS 7
+
 struct PlayMode : Mode {
 	PlayMode();
 	virtual ~PlayMode();
@@ -19,6 +21,7 @@ struct PlayMode : Mode {
 	virtual void Start() override;
 
 	//----- game state -----
+	float time = 0;
 
 	//input tracking:
 	struct Button {
@@ -41,5 +44,37 @@ struct PlayMode : Mode {
  
 	void DestroyFruit(int index);
 
+	std::string displayText;
+
 	void HandleSpacePressed();
+
+
+	enum FruitType : uint8_t
+	{		
+		BANANA = 0,
+		APPLE = 1,
+		ORANGE = 2,
+		COCONUT = 3
+	};
+
+	// spawning
+	struct SpawnTimeStamp
+	{
+		float timeStamp;
+		FruitType fruitType;
+	};
+
+	int currentSpawnIndex = 0;
+
+	const SpawnTimeStamp spawnPattern[MAX_LEVELS] = {
+		{ 0.5f, BANANA},
+		{ 1, ORANGE},
+		{ 2, BANANA},
+		{ 3, ORANGE},
+		{ 4, BANANA},
+		{ 5, ORANGE},
+		{ 5, BANANA},
+	};
+
+	void UpdateSpawn();
 };

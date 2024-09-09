@@ -44,6 +44,18 @@ struct Scene {
 		glm::mat4x3 make_local_to_world() const;
 		glm::mat4x3 make_world_to_local() const;
 
+		glm::quat Transform::WorldRotation() const
+    	{
+			if (parent) {
+				return parent->WorldRotation() * rotation;
+			}
+			else {
+				return rotation;
+			}
+		}
+
+		glm::quat Transform::WorldInverseRotation() const { return glm::inverse(WorldRotation()); }
+
 		//since hierarchy is tracked through pointers, copy-constructing a transform  is not advised:
 		Transform(Transform const &) = delete;
 		//if we delete some constructors, we need to let the compiler know that the default constructor is still okay:
@@ -58,7 +70,7 @@ struct Scene {
 			if (cleanUpTransform)
 				delete transform;
 		}
-		
+
 		Transform * transform;
 
 		//Contains all the data needed to run the OpenGL pipeline:
