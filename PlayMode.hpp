@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <deque>
+#include "Fruit.hpp"
 
 struct PlayMode : Mode {
 	PlayMode();
@@ -15,6 +16,7 @@ struct PlayMode : Mode {
 	virtual bool handle_event(SDL_Event const &, glm::uvec2 const &window_size) override;
 	virtual void update(float elapsed) override;
 	virtual void draw(glm::uvec2 const &drawable_size) override;
+	virtual void Start() override;
 
 	//----- game state -----
 
@@ -22,21 +24,22 @@ struct PlayMode : Mode {
 	struct Button {
 		uint8_t downs = 0;
 		uint8_t pressed = 0;
-	} left, right, down, up;
+	} space;
 
 	//local copy of the game scene (so code can change it during gameplay):
 	Scene scene;
 
-	//hexapod leg to wobble:
-	Scene::Transform *hip = nullptr;
-	Scene::Transform *upper_leg = nullptr;
-	Scene::Transform *lower_leg = nullptr;
-	glm::quat hip_base_rotation;
-	glm::quat upper_leg_base_rotation;
-	glm::quat lower_leg_base_rotation;
-	float wobble = 0.0f;
-	
+	std::unordered_map<std::string, glm::vec3> velocities;
+
 	//camera:
 	Scene::Camera *camera = nullptr;
 
+	Scene::Transform *lightTransform = nullptr;
+
+	std::vector<Fruit> fruits;
+	void InstantiateFruit(const std::string& meshName, glm::vec3 position);
+ 
+	void DestroyFruit(int index);
+
+	void HandleSpacePressed();
 };

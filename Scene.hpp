@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <optional>
 
 struct Scene {
 	struct Transform {
@@ -52,6 +53,12 @@ struct Scene {
 	struct Drawable {
 		//a 'Drawable' attaches attribute data to a transform:
 		Drawable(Transform *transform_) : transform(transform_) { assert(transform); }
+		~Drawable()
+		{
+			if (cleanUpTransform)
+				delete transform;
+		}
+		
 		Transform * transform;
 
 		//Contains all the data needed to run the OpenGL pipeline:
@@ -79,6 +86,9 @@ struct Scene {
 				GLenum target = GL_TEXTURE_2D;
 			} textures[TextureCount];
 		} pipeline;
+
+		std::optional<int> fruitIndex;
+		bool cleanUpTransform = false;
 	};
 
 	struct Camera {
