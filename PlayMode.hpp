@@ -44,7 +44,8 @@ struct PlayMode : Mode {
  
 	void DestroyFruit(int index);
 
-	std::string displayText;
+	int displayPoints = 0;
+	std::string displayText = "0";
 
 	void HandleSpacePressed();
 
@@ -67,13 +68,13 @@ struct PlayMode : Mode {
 	int currentSpawnIndex = 0;
 
 	const SpawnTimeStamp spawnPattern[MAX_LEVELS] = {
-		{ 0.5f, BANANA},
-		{ 1, ORANGE},
-		{ 2, BANANA},
-		{ 3, ORANGE},
+		{ 1, BANANA},
+		{ 2, ORANGE},
 		{ 4, BANANA},
-		{ 5, ORANGE},
-		{ 5, BANANA},
+		{ 4.5f, ORANGE},
+		{ 7, BANANA},
+		{ 7.7f, ORANGE},
+		{ 8, BANANA},
 	};
 
 	void UpdateSpawn();

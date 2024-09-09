@@ -11,4 +11,6 @@ struct Fruit
 
     float currentVelocity;
     glm::quat rotationDirection;
+
+	float timeOfInstantiation;
 };

@@ -10,6 +10,6 @@ Fruit::Fruit(Scene::Drawable &_drawable)
 
 void Fruit::Update(float deltaTime)
 {
-    currentVelocity += 9.8f * deltaTime;
+    currentVelocity += 3 * deltaTime;
     drawable->transform->position -= glm::vec3(0, 0, deltaTime * currentVelocity);
 }

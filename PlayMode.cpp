@@ -62,6 +62,8 @@ void PlayMode::InstantiateFruit(const std::string& meshName, glm::vec3 position)
 
 	drawable.fruitIndex = index;
 	drawable.cleanUpTransform = true;
+
+	fruits.back().timeOfInstantiation = time;
 }
 
 void PlayMode::DestroyFruit(int index)
@@ -87,6 +89,8 @@ PlayMode::PlayMode() : scene(*myscene_scene) {
 	for (auto &transform : scene.transforms) {
 		if (transform.name == "Sun")
 			lightTransform = &transform;
+		if (transform.name == "Bowl")
+			std::cout << "FOUND BOWL TRANSFORM: " << transform.position.x << " " << transform.position.y << " " << transform.position.z << '\n';
 	}
 
 	//get pointer to camera for convenience:
@@ -117,9 +121,38 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 	return false;
 }
 
+bool pairCMP (std::pair<float, int> i, std::pair<float, int> j) { return (i.first<j.first); }
+
 void PlayMode::HandleSpacePressed()
 {
-	
+	if (fruits.size() == 0)
+		return;
+
+	std::vector<std::pair<float, int>> distances;
+
+	int i = 0;
+	for(auto& fruit : fruits)
+	{
+		float d = fruit.drawable->transform->position.z + 2.059f;
+		if (d >= 0)
+			distances.emplace_back(std::make_pair(d, i));
+		
+		i++;
+	}
+
+	if (distances.size() == 0)
+		return;
+
+	std::sort(distances.begin(), distances.end(), pairCMP);
+
+	std::cout << distances[0].first << "\n";
+
+	if (distances[0].first < 0.5f)
+	{
+		displayPoints++;
+		displayText = std::to_string(displayPoints);
+		DestroyFruit(distances[0].second);
+	}
 }
 
 void PlayMode::UpdateSpawn()
@@ -129,7 +162,7 @@ void PlayMode::UpdateSpawn()
 	
 	if (time > spawnPattern[currentSpawnIndex].timeStamp)
 	{
-		InstantiateFruit(FRUITS[spawnPattern[currentSpawnIndex].fruitType], glm::vec3(Noire::Math::Random(-1, 1), Noire::Math::Random(-1, 1), Noire::Math::Random(2.0f, 2.5f)));
+		InstantiateFruit(FRUITS[spawnPattern[currentSpawnIndex].fruitType], glm::vec3(0, 0, Noire::Math::Random(2, 2.5f)));
 		currentSpawnIndex++;
 	}
 }
@@ -143,6 +176,12 @@ void PlayMode::update(float elapsed)
 	for(auto& fruit : fruits)
 	{
 		fruit.Update(elapsed);
+		if (fruit.drawable->transform->position.z < -2.059)
+		{
+			DestroyFruit(fruit.drawable->fruitIndex.value());
+			displayPoints--;
+			displayText = std::to_string(displayPoints);
+		}
 	}
 }
 
@@ -157,7 +196,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	glUniform3fv(lit_color_texture_program->LIGHT_ENERGY_vec3, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.95f)));
 	glUseProgram(0);
 
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0, 0, 0, 1.0f);
 	glClearDepth(1.0f); //1.0 is actually the default value to clear the depth buffer to, but FYI you can change it.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -178,7 +217,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 			0.0f, 0.0f, 0.0f, 1.0f
 		));
 
-		constexpr float H = 0.09f;
+		constexpr float H = 0.5f;
 		lines.draw_text(displayText,
 			glm::vec3(-aspect + 0.1f * H, -1.0 + 0.1f * H, 0.0),
 			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
