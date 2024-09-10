@@ -1,8 +1,8 @@
-# (TODO: your game's title)
+# Fruit Catcher
 
-Author: (TODO: your name)
+Author: Hank Xu
 
-Design: (TODO: In two sentences or fewer, describe what is new and interesting about your game.)
+Design: You are a retired fruit ninja, and your job is to catch fruits cuz your knife too dull to cut any.
 
 Screen Shot:
 
@@ -10,6 +10,6 @@ Screen Shot:
 
 How To Play:
 
-(TODO: describe the controls and (if needed) goals/strategy.)
+Use Space to catch fruits. Time it well! Good luck!
 
 This game was built with [NEST](NEST.md).
