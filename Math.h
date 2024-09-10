@@ -1,7 +1,8 @@
 #pragma once
 
 #include "glm/glm.hpp"
-
+#include <algorithm>
+#include <cstdint>
 
 // This file is taken from Noire Engine at https://github.com/hankxu1212/NoireEngine
 // A custom engine written by Hank Xu

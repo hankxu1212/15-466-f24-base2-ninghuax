@@ -147,8 +147,16 @@ void PlayMode::HandleSpacePressed()
 
 	std::cout << distances[0].first << "\n";
 
-	if (distances[0].first < 0.5f)
+	if (distances[0].first > 0.5f)
 	{
+		warnText = "Too Early!";
+		warnTextColor = c_red;
+	}
+	else
+	{
+		warnText = "Perfect!";
+		warnTextColor = c_green;
+
 		displayPoints++;
 		displayText = std::to_string(displayPoints);
 		DestroyFruit(distances[0].second);
@@ -178,6 +186,9 @@ void PlayMode::update(float elapsed)
 		fruit.Update(elapsed);
 		if (fruit.drawable->transform->position.z < -2.059)
 		{
+			warnText = "Too Slow!";
+			warnTextColor = c_white;
+
 			DestroyFruit(fruit.drawable->fruitIndex.value());
 			displayPoints--;
 			displayText = std::to_string(displayPoints);
@@ -227,6 +238,16 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 			glm::vec3(-aspect + 0.1f * H + ofs, -1.0 + 0.1f * H + ofs, 0.0),
 			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
 			glm::u8vec4(0xff, 0xff, 0xff, 0x00));
+
+		constexpr float H2 = 0.2f;
+		lines.draw_text(warnText,
+			glm::vec3(-aspect + 5 * H2, -1.0 + 2 * H2, 0.0),
+			glm::vec3(H2, 0.0f, 0.0f), glm::vec3(0.0f, H2, 0.0f),
+			glm::u8vec4(0x00, 0x00, 0x00, 0x00));
+		lines.draw_text(warnText,
+			glm::vec3(-aspect + 5 * H2 + ofs, -1.0 + 2 * H2 + ofs, 0.0),
+			glm::vec3(H2, 0.0f, 0.0f), glm::vec3(0.0f, H2, 0.0f),
+			warnTextColor);
 	}
 }
 

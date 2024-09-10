@@ -44,7 +44,7 @@ struct Scene {
 		glm::mat4x3 make_local_to_world() const;
 		glm::mat4x3 make_world_to_local() const;
 
-		glm::quat Transform::WorldRotation() const
+		glm::quat WorldRotation() const
     	{
 			if (parent) {
 				return parent->WorldRotation() * rotation;
@@ -54,7 +54,7 @@ struct Scene {
 			}
 		}
 
-		glm::quat Transform::WorldInverseRotation() const { return glm::inverse(WorldRotation()); }
+		glm::quat WorldInverseRotation() const { return glm::inverse(WorldRotation()); }
 
 		//since hierarchy is tracked through pointers, copy-constructing a transform  is not advised:
 		Transform(Transform const &) = delete;
